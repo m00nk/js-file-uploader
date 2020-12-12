@@ -32,7 +32,7 @@ module.exports = function (opts = {}) {
 		// - 'original' - не производить масштабирование и поворот, закачивать изображения как обычные файлы
 		// - 'image/jpeg' - конвертировать в JPEG
 		// - 'image/webp' - конвертировать в WEBP
-		finalImageMime: 'image/webp',
+		finalImageMime: 'image/jpeg',
 
 		// ширина изображения, к которой оно будет масштабировано (0 - не масштабировать, используется только
 		// когда `finalImageMime != 'original'`)
