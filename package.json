@@ -1,8 +1,9 @@
 {
-  "name": "file-uploader",
+  "name": "moonk-file-uploader",
   "description": "Multy-threaded file uploader.",
   "version": "1.0.0",
   "author": "Dmitrij Sheremetjev (https://github.com/m00nk)",
+  "main": "index.js",
   "dependencies": {
     "md5": "^2.2.1",
     "axios": "^0.19.2"
