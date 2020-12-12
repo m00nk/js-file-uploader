@@ -200,7 +200,7 @@ _Все загружаемые файлы передаются в виде base6
 ### Клиентский код
 
 ```javascript
-import uploaderFunc from 'FileUploader';
+const uploaderFunc = require('moonk-file-uploader');
 
 try {
 	const uploader = uploaderFunc({
