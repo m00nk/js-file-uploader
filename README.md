@@ -49,16 +49,16 @@ _Все загружаемые файлы передаются в виде base6
 	- '**image/webp**' - конвертировать в WEBP
 
 
-- **maxImageWidth** - ширина изображения, к которой оно будет масштабировано (0
-	- не масштабировать, используется только
-	  когда `finalImageMime != 'original'`)
+- **maxImageWidth** - ширина изображения, к которой оно будет масштабировано
+  (0 - не масштабировать, используется только
+  когда `finalImageMime != 'original'`)
 
-- **maxImageHeight** - высота изображения, к которой оно будет масштабировано (0
-	- не масштабировать, используется только
-	  когда `finalImageMime != 'original'`)
+- **maxImageHeight** - высота изображения, к которой оно будет масштабировано
+  (0 - не масштабировать, используется только
+  когда `finalImageMime != 'original'`)
 
-- **quality** - качество JPEG или WEBP (используется только при масштабировании,
-  используется только когда `finalImageMime  != 'original'`)
+- **quality** - качество JPEG или WEBP (используется только
+  когда `finalImageMime  != 'original'`)
 
 - **maxTasks** - максимальное количество одновременных закачек
 
@@ -104,7 +104,8 @@ _Все загружаемые файлы передаются в виде base6
   очередного файла. В этот момент объект **FileInfo** уже содержит ответ
   сервера.
 
-- **onUploadError(FileInfo fInfo)** - при ошибке закачки. В этот момент объект **FileInfo** уже содержит текст ошибки, которую вернул сервер (в
+- **onUploadError(FileInfo fInfo)** - при ошибке закачки. В этот момент
+  объект **FileInfo** уже содержит текст ошибки, которую вернул сервер (в
   поле `error`).
 
 - **onEnd()** - в момент окончания всех заданий в очереди
@@ -252,12 +253,12 @@ catch (e) {
 let imgBase64 = request.body.base64data;
 
 // собираем простое уникальное имя файла
-const filename = request.body.fileHash + '.' + request.body.fileExt;
+const filename = request.body.guid + '.' + request.body.fileExt;
 
 // пока будем складывать в /tmp
 const fullPath = '/tmp/' + filename;
 
-// отрезаем заголовок
+// отрезаем заголовок base64
 const dataPos = imgBase64.indexOf(',');
 imgBase64 = imgBase64.substr(dataPos + 1);
 
