@@ -56,6 +56,12 @@ module.exports = function (opts = {}) {
 
 		//===========================================
 
+		// вызывается из addFiles перед началом добавления первого файла. Необходим для избавления от паузы, которая возникает с момента вызова addFiles до вызова onStart
+		onStartProcessing: null,
+
+		// вызывается после обработки последнего файла в списке переданных в addFiles.
+		onEndProcessing: null,
+
 		// вызывается перед добавлением файла в очередь. Для каждого файла, получает объект FileInfo (на данный момент заполнены только поля orig*), ожидает
 		// логическое значение - разрешение на добавление в очередь.
 		onFileAdd: null,
@@ -89,6 +95,7 @@ module.exports = function (opts = {}) {
 
 	return {
 		async addFiles(files) {
+			this.params.onStartProcessing && this.params.onStartProcessing();
 			for (let f of files) {
 
 				const ext = f.name.replace(/(.*\.)/, '');
@@ -159,11 +166,14 @@ module.exports = function (opts = {}) {
 
 					this.params.onFileAdded && this.params.onFileAdded(fi);
 
-					if (this.params.autoStart) {
-						this.start();
-					}
 				}
 			}
+
+			if (this.params.autoStart) {
+				this.start();
+			}
+
+			this.params.onEndProcessing && this.params.onEndProcessing();
 		},
 
 		start() {

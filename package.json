@@ -1,7 +1,7 @@
 {
   "name": "moonk-file-uploader",
   "description": "Multy-threaded file uploader.",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "author": "Dmitrij Sheremetjev (https://github.com/m00nk)",
   "main": "index.js",
   "license": "MIT",
