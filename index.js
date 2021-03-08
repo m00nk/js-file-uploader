@@ -162,10 +162,11 @@ module.exports = function (opts = {}) {
 					fi.fileHash = md5(base64data);
 
 					//-------------------------------------------
-					this.uploadQueue.push({info: fi, base64data});
 
-					this.params.onFileAdded && this.params.onFileAdded(fi);
 
+					if(this.params.onFileAdded == null || this.params.onFileAdded(fi)){
+						this.uploadQueue.push({info: fi, base64data});
+					}
 				}
 			}
 
