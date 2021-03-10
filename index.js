@@ -149,7 +149,7 @@ module.exports = function (opts = {}) {
 						}
 					}
 
-					if (base64data == null) { // читаем файл
+					if (base64data == null) { // это не изображение - читаем как обычный файл
 						base64data = await (new Promise(r => {
 							const fr = new FileReader();
 							fr.onload = (e) => {
