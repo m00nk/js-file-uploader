@@ -8,8 +8,8 @@
 const md5 = require('md5');
 const axios = require('axios');
 
-module.exports = function (opts = {}) {
-	if (typeof window == 'undefined' || typeof window.FileReader !== 'function') {
+module.exports = function(opts = {}) {
+	if(typeof window == 'undefined' || typeof window.FileReader !== 'function') {
 		throw new Error("The file API isn't supported on this browser yet.");
 	}
 
@@ -89,20 +89,20 @@ module.exports = function (opts = {}) {
 	};
 
 	Object.assign(params, opts);
-	if (['original', 'image/jpeg', 'image/webp'].indexOf(params.finalImageMime) < 0) {
+	if(['original', 'image/jpeg', 'image/webp'].indexOf(params.finalImageMime) < 0) {
 		params.finalImageMime = 'image/jpeg';
 	}
 
 	return {
 		async addFiles(files) {
 			this.params.onStartProcessing && this.params.onStartProcessing();
-			for (let f of files) {
+			for(let f of files) {
 
 				const ext = f.name.replace(/(.*\.)/, '');
 				const name = f.name.replace(/\.[^.]+/, '');
 				let dim = null;
 
-				if (f.type.startsWith('image/')) { // найдено изображение - определяем его размеры
+				if(f.type.startsWith('image/')) { // найдено изображение - определяем его размеры
 					dim = await getImgDimensions(f);
 				}
 
@@ -116,15 +116,15 @@ module.exports = function (opts = {}) {
 					origHeight: dim ? dim[1] : 0,
 				});
 
-				if (this.params.onFileAdd == null || this.params.onFileAdd(fi)) {
+				if(this.params.onFileAdd == null || this.params.onFileAdd(fi)) {
 					let base64data = null;
 
 					fi.fileSize = fi.origSize;
 					fi.fileMime = fi.origMime;
 					fi.fileExt = fi.origFileExt.toLowerCase();
 
-					if (f.type.startsWith('image/')) { // найдено изображение
-						if (this.params.finalImageMime != 'original') {
+					if(f.type.startsWith('image/')) { // найдено изображение
+						if(this.params.finalImageMime != 'original') {
 							const z = await processImage(
 								f,
 								this.params.maxImageWidth,
@@ -149,7 +149,7 @@ module.exports = function (opts = {}) {
 						}
 					}
 
-					if (base64data == null) { // это не изображение - читаем как обычный файл
+					if(base64data == null) { // это не изображение - читаем как обычный файл
 						base64data = await (new Promise(r => {
 							const fr = new FileReader();
 							fr.onload = (e) => {
@@ -164,13 +164,13 @@ module.exports = function (opts = {}) {
 					//-------------------------------------------
 
 
-					if(this.params.onFileAdded == null || this.params.onFileAdded(fi)){
+					if(this.params.onFileAdded == null || this.params.onFileAdded(fi)) {
 						this.uploadQueue.push({info: fi, base64data});
 					}
 				}
 			}
 
-			if (this.params.autoStart) {
+			if(this.params.autoStart) {
 				this.start();
 			}
 
@@ -178,14 +178,14 @@ module.exports = function (opts = {}) {
 		},
 
 		start() {
-			if (!this.isUploading && this.uploadQueue.length > 0) {
+			if(!this.isUploading && this.uploadQueue.length > 0) {
 				this.isUploading = true;
 				this.params.onStart && this.params.onStart();
 			}
 			uploadNextFile(this);
 		},
 
-		FileInfo: class  {
+		FileInfo: class {
 			/**
 			 * заполняем данными существующие поля объекта
 			 *
@@ -194,10 +194,10 @@ module.exports = function (opts = {}) {
 			load(p) {
 				p = Object.assign({}, p);
 
-				if (typeof p === 'object') {
+				if(typeof p === 'object') {
 					const availableKeys = Object.keys(this);
-					for (let key in p) {
-						if (availableKeys.indexOf(key) >= 0) {
+					for(let key in p) {
+						if(availableKeys.indexOf(key) >= 0) {
 							this[key] = p[key];
 						}
 					}
@@ -205,73 +205,71 @@ module.exports = function (opts = {}) {
 			}
 
 			constructor(data) {
-				this.guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+				this.guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 					var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
 					return v.toString(16);
 				});
 
-			// оригинальное имя файла (без расширения)
-			this.origFileName = '';
+				// оригинальное имя файла (без расширения)
+				this.origFileName = '';
 
-			// оригинальное расширение файла
-			this.origFileExt = '';
+				// оригинальное расширение файла
+				this.origFileExt = '';
 
-			// оригинальный mime-тип файла
-			this.origMime = '';
+				// оригинальный mime-тип файла
+				this.origMime = '';
 
-			// оригинальный размер файла в байтах
-			this.origSize = 0;
+				// оригинальный размер файла в байтах
+				this.origSize = 0;
 
-			// оригинальная ширина изображения в точках
-			this.origWidth = 0;
+				// оригинальная ширина изображения в точках
+				this.origWidth = 0;
 
-			// оригинальная высота изображения в точках
-			this.origHeight = 0;
+				// оригинальная высота изображения в точках
+				this.origHeight = 0;
 
-			// оригинальная дата создания файла
-			this.origDate = null;
+				// оригинальная дата создания файла
+				this.origDate = null;
 
-			// хэш на базе финального содержимого и оригинального имени файла
-			this.fileHash = '';
+				// хэш на базе финального содержимого и оригинального имени файла
+				this.fileHash = '';
 
-			// финальное расширение файла в нижнем регистре (для масштабированных изображений всегда jpg)
-			this.fileExt = '';
+				// финальное расширение файла в нижнем регистре (для масштабированных изображений всегда jpg)
+				this.fileExt = '';
 
-			// финальный размер файла в байтах (для изображений - после масштабирования)
-			this.fileSize = 0;
+				// финальный размер файла в байтах (для изображений - после масштабирования)
+				this.fileSize = 0;
 
-			// финальная ширина изображения в точках (после масштабирования)
-			this.fileWidth = 0;
+				// финальная ширина изображения в точках (после масштабирования)
+				this.fileWidth = 0;
 
-			// финальная высота изображения в точках (после масштабирования)
-			this.fileHeight = 0;
+				// финальная высота изображения в точках (после масштабирования)
+				this.fileHeight = 0;
 
-			// финальный mime-тип файла (для масштабированных изображений всегда image/jpeg)
-			this.fileMime = '';
+				// финальный mime-тип файла (для масштабированных изображений всегда image/jpeg)
+				this.fileMime = '';
 
-			// base64-кодированная превьюшка
-			this.thumb = null;
+				// base64-кодированная превьюшка
+				this.thumb = null;
 
-			// статус (pending, uploading, success, error)
-			this.status = 'pending';
+				// статус (pending, uploading, success, error)
+				this.status = 'pending';
 
-			// прогресс загрузки в процентах
-			this.progress = 0;
+				// прогресс загрузки в процентах
+				this.progress = 0;
 
-			// текст ошибки либо пустая строка
-			this.error = '';
+				// текст ошибки либо пустая строка
+				this.error = '';
 
-			// имя файла на сервере с расширением (доступно только после загрузки, пустая строка при ошибке)
-			this.filename = '';
+				// имя файла на сервере с расширением (доступно только после загрузки, пустая строка при ошибке)
+				this.filename = '';
 
-			// URL загруженного файла (доступно только после загрузки если разрешено его получать, пустая строка при ошибке)
-			this.url = '';
-
+				// URL загруженного файла (доступно только после загрузки если разрешено его получать, пустая строка при ошибке)
+				this.url = '';
 
 				this.load(data);
 			}
 		},
-
 
 		//-------------------------------------------
 		params,
@@ -288,29 +286,35 @@ module.exports = function (opts = {}) {
  * @param obj
  */
 function uploadNextFile(obj) {
-	if (obj.uploadQueue.length == 0) {
+	if(obj.uploadQueue.length == 0) {
 		return;
 	}
 
-	if (obj.nowUploading < obj.params.maxTasks && obj.nowUploading < obj.uploadQueue.length) {
+	if(obj.nowUploading < obj.params.maxTasks && obj.nowUploading < obj.uploadQueue.length) {
 		const task = obj.uploadQueue[obj.nowUploading];
-		obj.nowUploading++;
 
-		const data = Object.assign({}, task.info);
-		data.base64data = task.base64data;
-		data.meta = obj.params.meta;
+		if(task.status == 'pending') { // на случай, если в хуках клиентский код сменил статус
+			obj.nowUploading++;
 
-		delete data.thumb;
-		delete data.status;
-		delete data.progress;
-		delete data.error;
-		delete data.filename;
-		delete data.url;
+			const data = Object.assign({}, task.info);
+			data.base64data = task.base64data;
+			data.meta = obj.params.meta;
 
-		task.info.progress = 0;
-		task.info.status = 'uploading';
+			delete data.thumb;
+			delete data.status;
+			delete data.progress;
+			delete data.error;
+			delete data.filename;
+			delete data.url;
 
-		obj.params.onFileStart && obj.params.onFileStart(task.info);
+			task.info.progress = 0;
+			task.info.status = 'uploading';
+
+			obj.params.onFileStart && obj.params.onFileStart(task.info);
+		}
+		else{ // удаляем "неправильные" закачки
+			obj.uploadQueue = obj.uploadQueue.filter(v => v.info.guid != task.info.guid);
+		}
 
 		uploadNextFile(obj);
 
@@ -326,7 +330,7 @@ function uploadNextFile(obj) {
 
 		axios.post(obj.params.url, data, reqParams)
 			.then(res => {
-				if (res.data.status == 'ok') {
+				if(res.data.status == 'ok') {
 					task.info.error = '';
 					task.info.progress = 100;
 					task.info.status = 'success';
@@ -362,10 +366,10 @@ function uploadNextFile(obj) {
  * @param obj
  */
 function checkForEndOfUploading(obj) {
-	if (obj.nowUploading == 0 && obj.uploadQueue.length == 0) {
+	if(obj.nowUploading == 0 && obj.uploadQueue.length == 0) {
 
 		// убиваем старый таймер, чтобы не дублировать события
-		if (obj.timer != null) {
+		if(obj.timer != null) {
 			clearTimeout(obj.timer);
 		}
 
@@ -391,7 +395,7 @@ function getImgDimensions(file) {
 	return new Promise((resolve) => {
 		let img = document.createElement("img");
 		img.src = window.URL.createObjectURL(file);
-		img.onload = function () {
+		img.onload = function() {
 			const out = [img.width, img.height];
 			window.URL.revokeObjectURL(img.src);
 			img.src = ''; // чистим память
@@ -421,15 +425,15 @@ function processImage(file, maxWidth = 0, maxHeight = 0, mime = 'image/jpeg', qu
 
 		let img = document.createElement("img");
 		img.src = window.URL.createObjectURL(file);
-		img.onload = function () {
+		img.onload = function() {
 			fileItem.width = img.width;
 			fileItem.height = img.height;
 			fileItem.size = file.size;
 
 			let fileReader = new FileReader();
-			fileReader.onload = function (e) {
+			fileReader.onload = function(e) {
 				let orientation = getOrientation(e.target.result);
-				if (orientation < 1) orientation = 1;
+				if(orientation < 1) orientation = 1;
 
 				let z = getResizedImage(img, maxWidth, maxHeight, mime, quality / 100, orientation);
 				fileItem.width = z.width;
@@ -437,7 +441,7 @@ function processImage(file, maxWidth = 0, maxHeight = 0, mime = 'image/jpeg', qu
 				fileItem.imgBase64 = z.data;
 				fileItem.size = Math.round(z.data.length * 3 / 4);
 
-				if (thumbWidth > 0 || thumbHeight > 0) {
+				if(thumbWidth > 0 || thumbHeight > 0) {
 					z = getResizedImage(img, thumbWidth, thumbHeight, mime, quality / 100, orientation);
 					fileItem.thumbBase64 = z.data;
 				}
@@ -473,12 +477,12 @@ function getResizedImage(img, maxW = 0, maxH = 0, mime = 'image/jpeg', quality, 
 	maxW = maxW == 0 ? iW : maxW;
 	maxH = maxH == 0 ? iH : maxH;
 
-	if (iW > maxW) {
+	if(iW > maxW) {
 		iH *= maxW / iW;
 		iW = maxW;
 	}
 
-	if (iH > maxH) {
+	if(iH > maxH) {
 		iW *= maxH / iH;
 		iH = maxH;
 	}
@@ -488,13 +492,13 @@ function getResizedImage(img, maxW = 0, maxH = 0, mime = 'image/jpeg', quality, 
 
 	let cW = iW, cH = iH;
 
-	if (orientation > 4) {
+	if(orientation > 4) {
 		cW = iH;
 		cH = iW;
 	}
 
 	let angle = 0;
-	switch (orientation) {
+	switch(orientation) {
 		case 3:
 		case 4:
 			angle = Math.PI;
@@ -553,20 +557,20 @@ const EXIF_ORIENTATION_IS_NOT_DEFINED = -1;
  */
 function getOrientation(fileReaderResult) {
 	let view = new DataView(fileReaderResult);
-	if (view.getUint16(0, false) != 0xFFD8) {
+	if(view.getUint16(0, false) != 0xFFD8) {
 		return EXIF_FILE_IS_NOT_JPEG;
 	}
 
 	let length = view.byteLength, offset = 2;
-	while (offset < length) {
-		if (view.getUint16(offset + 2, false) <= 8) {
+	while(offset < length) {
+		if(view.getUint16(offset + 2, false) <= 8) {
 			return EXIF_ORIENTATION_IS_NOT_DEFINED;
 		}
 
 		let marker = view.getUint16(offset, false);
 		offset += 2;
-		if (marker == 0xFFE1) {
-			if (view.getUint32(offset += 2, false) != 0x45786966) {
+		if(marker == 0xFFE1) {
+			if(view.getUint32(offset += 2, false) != 0x45786966) {
 				return EXIF_ORIENTATION_IS_NOT_DEFINED;
 			}
 
@@ -574,13 +578,13 @@ function getOrientation(fileReaderResult) {
 			offset += view.getUint32(offset + 4, little);
 			let tags = view.getUint16(offset, little);
 			offset += 2;
-			for (let i = 0; i < tags; i++) {
-				if (view.getUint16(offset + (i * 12), little) == 0x0112) {
+			for(let i = 0; i < tags; i++) {
+				if(view.getUint16(offset + (i * 12), little) == 0x0112) {
 					return view.getUint16(offset + (i * 12) + 8, little);
 				}
 			}
 		}
-		else if ((marker & 0xFF00) != 0xFF00) {
+		else if((marker & 0xFF00) != 0xFF00) {
 			break;
 		}
 		else {
