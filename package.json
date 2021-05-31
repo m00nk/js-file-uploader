@@ -1,13 +1,14 @@
 {
   "name": "moonk-file-uploader",
   "description": "Multy-threaded file uploader.",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "author": "Dmitrij Sheremetjev (https://github.com/m00nk)",
-  "main": "index.js",
+  "main": "Uploader.js",
   "license": "MIT",
   "dependencies": {
     "md5": "^2.3",
-    "axios": "^0.21"
+    "axios": "^0.21",
+    "lodash": "^4.17"
   },
   "repository": {
     "type": "git",
